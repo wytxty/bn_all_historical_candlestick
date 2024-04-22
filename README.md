@@ -1,6 +1,7 @@
 Request packages including requests, time, pandas, datetime
 
 You can get all historical kline data of Binance
+* Notice, the time in the final df is represents the kline close time, not the kline open time.
 
 Example:
 
