@@ -3,6 +3,7 @@ Request packages including requests, time, pandas, datetime
 You can get all historical kline data of Binance
 
 Example:
+
     proxy_host = "127.0.0.1"
     proxy_port = 0
     proxies = {}
