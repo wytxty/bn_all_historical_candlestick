@@ -37,28 +37,17 @@ class get_bn_all_klines():
             API_BASE = 'https://fapi.binance.com/fapi/v1/'
 
         params = {'symbol': symbol, 'interval': interval, 'startTime': start_time, 'limit': limit_per_batch}
-
         try:
             response = requests.get(url=f'{API_BASE}klines', params=params, timeout=30, proxies=self.proxies)
-        except requests.exceptions.ConnectionError:
-            print('Connection error, Cooling down for 10 seconds')
-            time.sleep(10)
-            return self.get_batch(type, symbol, start_time, interval, limit_per_batch)
-
-        except requests.exceptions.Timeout:
-            print('Timeout, Cooling down for 10 seconds')
-            time.sleep(10)
-            return self.get_batch(type, symbol, start_time, interval, limit_per_batch)
-
-        except requests.exceptions.ConnectionResetError:
-            print('Connection reset error, Cooling down for 10 seconds')
+        except (ConnectionError, Timeout, ChunkedEncodingError, ConnectionResetError, TooManyRedirects, ServerError, ProxyError, SSLError):
+            print('Download breaks, Cooling down for 10 seconds')
             time.sleep(10)
             return self.get_batch(type, symbol, start_time, interval, limit_per_batch)
 
         if response.status_code == 200:
             return pd.DataFrame(response.json(), columns=self.LABELS)
-        print(f'Got erroneous response back: {response}')
-        return pd.DataFrame([])
+        else:
+            return self.get_batch(type, symbol, start_time, interval, limit_per_batch)
 
     def get_all_batch(self, type, symbol, start_time, interval, limit_per_batch):
 
